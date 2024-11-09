@@ -394,41 +394,52 @@ const VegetationAnalysis: React.FC = () => {
 
     // CSVファイルのダウンロード
     const downloadCSV = (results: Array<AnalysisResult & { filename: string }>) => {
-    const selectedKeys = Object.entries(selectedIndices)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([key]) => key);
-    
-    const headers = [
-      'Filename',
-      'Total Pixels',
-      'Vegetation Pixels',
-      'Vegetation Coverage (%)',
-      'Threshold Method',
-      'Threshold Value',
-      ...selectedKeys.map(key => `${ALGORITHMS[key].name} (Vegetation)`),
-      ...selectedKeys.map(key => `${ALGORITHMS[key].name} (Whole)`)
-    ];
-    
-    const csvContent = [
-      headers.join(','),
-      ...results.map(result => [
-        result.filename,
-        result.totalPixels,
-        result.vegetationPixels,
-        result.vegetationCoverage.toFixed(2),
-        thresholdMethod,
-        thresholdMethod === 'otsu' ? 'auto' : threshold.toFixed(3),
-        ...selectedKeys.map(key => result.indices.vegetation[key].toFixed(4)),
-        ...selectedKeys.map(key => result.indices.whole[key].toFixed(4))
-      ].join(','))
-    ].join('\n');
-  
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'vegetation_analysis_results.csv';
-    link.click();
-    };
+        const selectedKeys = Object.entries(selectedIndices)
+          .filter(([_, isSelected]) => isSelected)
+          .map(([key]) => key);
+        
+        // ヘッダーの修正
+        const headers = [
+          'Filename',
+          'Total Pixels',
+          'Vegetation Pixels',
+          'Vegetation Coverage (%)',
+          'Threshold Method',
+          'Threshold Value',
+          // 植生部分の指数
+          ...selectedKeys.map(key => `${ALGORITHMS[key as keyof typeof ALGORITHMS].name} (Vegetation)`),
+          // 画像全体の指数
+          ...selectedKeys.map(key => `${ALGORITHMS[key as keyof typeof ALGORITHMS].name} (Whole)`)
+        ];
+        
+        // データ行の修正
+        const rows = results.map(result => [
+          result.filename,
+          result.totalPixels,
+          result.vegetationPixels,
+          result.vegetationCoverage.toFixed(2),
+          thresholdMethod,
+          thresholdMethod === 'otsu' ? 'auto' : threshold.toFixed(3),
+          // 植生部分の指数値
+          ...selectedKeys.map(key => result.indices.vegetation[key].toFixed(4)),
+          // 画像全体の指数値
+          ...selectedKeys.map(key => result.indices.whole[key].toFixed(4))
+        ]);
+      
+        // CSVコンテンツの作成
+        const csvContent = [
+          headers.join(','),
+          ...rows.map(row => row.join(','))
+        ].join('\n');
+      
+        // ファイルのダウンロード
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const date = new Date().toISOString().slice(0, 10);
+        link.href = URL.createObjectURL(blob);
+        link.download = `vegetation_analysis_${date}.csv`;
+        link.click();
+      };
 
     // 正規化関数
     const normalizeRGB = (r: number, g: number, b: number): [number, number, number] => {
