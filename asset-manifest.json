@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/vegetation-analysis/static/css/main.2724fbee.css",
-    "main.js": "/vegetation-analysis/static/js/main.77b68f4f.js",
+    "main.js": "/vegetation-analysis/static/js/main.d50d0cff.js",
     "static/js/453.def50379.chunk.js": "/vegetation-analysis/static/js/453.def50379.chunk.js",
     "index.html": "/vegetation-analysis/index.html",
     "main.2724fbee.css.map": "/vegetation-analysis/static/css/main.2724fbee.css.map",
-    "main.77b68f4f.js.map": "/vegetation-analysis/static/js/main.77b68f4f.js.map",
+    "main.d50d0cff.js.map": "/vegetation-analysis/static/js/main.d50d0cff.js.map",
     "453.def50379.chunk.js.map": "/vegetation-analysis/static/js/453.def50379.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.2724fbee.css",
-    "static/js/main.77b68f4f.js"
+    "static/js/main.d50d0cff.js"
   ]
 }
