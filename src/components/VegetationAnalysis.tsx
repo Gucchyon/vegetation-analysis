@@ -126,7 +126,7 @@ const ALGORITHMS: Record<string, Algorithm> = {
 // 言語設定
 const translations = {
   ja: {
-    title: "植生解析",
+    title: "植生の解析",
     thresholdMethod: {
       label: "2値化方法",
       otsu: "大津の方法（自動）",
@@ -395,34 +395,34 @@ const VegetationAnalysis: React.FC = () => {
     // CSVファイルのダウンロード
     const downloadCSV = (results: Array<AnalysisResult & { filename: string }>) => {
     const selectedKeys = Object.entries(selectedIndices)
-        .filter(([_, isSelected]) => isSelected)
-        .map(([key]) => key);
+      .filter(([_, isSelected]) => isSelected)
+      .map(([key]) => key);
     
     const headers = [
-        'Filename',
-        'Total Pixels',
-        'Vegetation Pixels',
-        'Vegetation Coverage (%)',
-        'Threshold Method',
-        'Threshold Value',
-        ...selectedKeys.map(key => `${ALGORITHMS[key as keyof typeof ALGORITHMS].name} (Vegetation)`),
-        ...selectedKeys.map(key => `${ALGORITHMS[key as keyof typeof ALGORITHMS].name} (Whole)`)
+      'Filename',
+      'Total Pixels',
+      'Vegetation Pixels',
+      'Vegetation Coverage (%)',
+      'Threshold Method',
+      'Threshold Value',
+      ...selectedKeys.map(key => `${ALGORITHMS[key].name} (Vegetation)`),
+      ...selectedKeys.map(key => `${ALGORITHMS[key].name} (Whole)`)
     ];
     
     const csvContent = [
-        headers.join(','),
-        ...results.map(result => [
+      headers.join(','),
+      ...results.map(result => [
         result.filename,
         result.totalPixels,
         result.vegetationPixels,
         result.vegetationCoverage.toFixed(2),
         thresholdMethod,
         thresholdMethod === 'otsu' ? 'auto' : threshold.toFixed(3),
-        ...selectedKeys.map(key => `${ALGORITHMS[key as keyof typeof ALGORITHMS].name} (Vegetation)`),
-        ...selectedKeys.map(key => `${ALGORITHMS[key as keyof typeof ALGORITHMS].name} (Whole)`)
-        ].join(','))
+        ...selectedKeys.map(key => result.indices.vegetation[key].toFixed(4)),
+        ...selectedKeys.map(key => result.indices.whole[key].toFixed(4))
+      ].join(','))
     ].join('\n');
-
+  
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
